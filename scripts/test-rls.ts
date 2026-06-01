@@ -82,12 +82,34 @@ async function expectDuplicateBlocked() {
   check('duplicate (store,date) blocked', error?.code === '23505', error?.message);
 }
 
+// Reset the row to 'submitted' as NSO so the approve assertions test the real path
+// regardless of state left over from a prior run.
+async function resetToSubmitted(kpiId: string) {
+  const c = clientFor('nso'); await signIn(c, 'nso');
+  const { error } = await c.from('daily_kpi_reports')
+    .update({ status: 'submitted', reviewed_by: null, reviewed_at: null, review_comment: null })
+    .eq('id', kpiId);
+  await c.auth.signOut();
+  if (error) throw new Error(`reset to submitted: ${error.message}`);
+}
+
 async function expectUdcCannotApprove(kpiId: string) {
   const c = clientFor('udc'); await signIn(c, 'udc');
   const { error } = await c.from('daily_kpi_reports')
     .update({ status: 'approved' }).eq('id', kpiId);
   await c.auth.signOut();
-  check('udc cannot self-approve', error !== null && /status/i.test(error?.message ?? ''), error?.message);
+  // The protect_status trigger raises "Submitter cannot change KPI status".
+  // If the policy USING clause filters the row out first (silent no-op), the row stays 'submitted' —
+  // we accept either as PASS, since both mean UDC cannot self-approve.
+  if (error && /status/i.test(error.message)) {
+    check('udc cannot self-approve', true, error.message);
+    return;
+  }
+  // Verify row was not actually approved.
+  const verify = clientFor('nso'); await signIn(verify, 'nso');
+  const { data } = await verify.from('daily_kpi_reports').select('status').eq('id', kpiId).single();
+  await verify.auth.signOut();
+  check('udc cannot self-approve', data?.status === 'submitted', `status now: ${data?.status}`);
 }
 
 async function expectNsoCanApprove(kpiId: string) {
@@ -129,6 +151,7 @@ async function main() {
     check(`kpi ${role}`, got === exp, `expected ${exp}, saw ${got}`);
   }
 
+  await resetToSubmitted(kpiId);
   await expectUdcCannotApprove(kpiId);
   await expectNsoCanApprove(kpiId);
 
