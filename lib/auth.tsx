@@ -14,6 +14,7 @@ type AuthContextValue = {
   isAdmin: boolean;
   signInWithOtp: (email: string) => Promise<{ error: string | null }>;
   verifyOtp: (email: string, token: string) => Promise<{ error: string | null }>;
+  signInWithPassword: (email: string, password: string) => Promise<{ error: string | null }>;
   signOut: () => Promise<void>;
 };
 
@@ -57,6 +58,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     },
     verifyOtp: async (email, token) => {
       const { error } = await supabase.auth.verifyOtp({ email, token, type: 'email' });
+      return { error: error?.message ?? null };
+    },
+    signInWithPassword: async (email, password) => {
+      const { error } = await supabase.auth.signInWithPassword({ email, password });
       return { error: error?.message ?? null };
     },
     signOut: async () => { await supabase.auth.signOut(); },
