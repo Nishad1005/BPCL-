@@ -11,14 +11,14 @@ import { AuthProvider, useAuth } from '@/lib/auth';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 
 function RootNavigator() {
-  const { isSignedIn } = useAuth();
-
+  const { session, loading } = useAuth();
+  if (loading) return null;
   return (
     <Stack screenOptions={{ headerShown: false }}>
-      <Stack.Protected guard={isSignedIn}>
+      <Stack.Protected guard={!!session}>
         <Stack.Screen name="(app)" />
       </Stack.Protected>
-      <Stack.Protected guard={!isSignedIn}>
+      <Stack.Protected guard={!session}>
         <Stack.Screen name="(auth)" />
       </Stack.Protected>
     </Stack>
