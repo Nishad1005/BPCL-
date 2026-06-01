@@ -39,6 +39,211 @@ export type Database = {
   }
   public: {
     Tables: {
+      attachments: {
+        Row: {
+          created_at: string
+          entity_id: string
+          entity_type: Database["public"]["Enums"]["attachment_entity"]
+          id: string
+          storage_path: string
+          uploaded_by: string
+        }
+        Insert: {
+          created_at?: string
+          entity_id: string
+          entity_type: Database["public"]["Enums"]["attachment_entity"]
+          id?: string
+          storage_path: string
+          uploaded_by: string
+        }
+        Update: {
+          created_at?: string
+          entity_id?: string
+          entity_type?: Database["public"]["Enums"]["attachment_entity"]
+          id?: string
+          storage_path?: string
+          uploaded_by?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "attachments_uploaded_by_fkey"
+            columns: ["uploaded_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      daily_kpi_reports: {
+        Row: {
+          abv: number | null
+          fuel_conversion_pct: number | null
+          id: string
+          late: boolean
+          nob: number
+          nso_id: string | null
+          promotion_sales: number | null
+          report_date: string
+          review_comment: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          slow_category_id: string | null
+          slow_category_remarks: string | null
+          status: Database["public"]["Enums"]["kpi_status"]
+          store_id: string
+          submitted_at: string
+          submitted_by: string
+          support_needed: string | null
+          top_category_id: string | null
+          top_category_remarks: string | null
+          total_sales: number
+          udc_id: string | null
+          walk_ins: number | null
+        }
+        Insert: {
+          abv?: number | null
+          fuel_conversion_pct?: number | null
+          id?: string
+          late?: boolean
+          nob: number
+          nso_id?: string | null
+          promotion_sales?: number | null
+          report_date: string
+          review_comment?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          slow_category_id?: string | null
+          slow_category_remarks?: string | null
+          status?: Database["public"]["Enums"]["kpi_status"]
+          store_id: string
+          submitted_at?: string
+          submitted_by: string
+          support_needed?: string | null
+          top_category_id?: string | null
+          top_category_remarks?: string | null
+          total_sales: number
+          udc_id?: string | null
+          walk_ins?: number | null
+        }
+        Update: {
+          abv?: number | null
+          fuel_conversion_pct?: number | null
+          id?: string
+          late?: boolean
+          nob?: number
+          nso_id?: string | null
+          promotion_sales?: number | null
+          report_date?: string
+          review_comment?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          slow_category_id?: string | null
+          slow_category_remarks?: string | null
+          status?: Database["public"]["Enums"]["kpi_status"]
+          store_id?: string
+          submitted_at?: string
+          submitted_by?: string
+          support_needed?: string | null
+          top_category_id?: string | null
+          top_category_remarks?: string | null
+          total_sales?: number
+          udc_id?: string | null
+          walk_ins?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "daily_kpi_reports_nso_id_fkey"
+            columns: ["nso_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "daily_kpi_reports_reviewed_by_fkey"
+            columns: ["reviewed_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "daily_kpi_reports_slow_category_id_fkey"
+            columns: ["slow_category_id"]
+            isOneToOne: false
+            referencedRelation: "product_categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "daily_kpi_reports_store_id_fkey"
+            columns: ["store_id"]
+            isOneToOne: false
+            referencedRelation: "stores"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "daily_kpi_reports_submitted_by_fkey"
+            columns: ["submitted_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "daily_kpi_reports_top_category_id_fkey"
+            columns: ["top_category_id"]
+            isOneToOne: false
+            referencedRelation: "product_categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "daily_kpi_reports_udc_id_fkey"
+            columns: ["udc_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      daily_kpi_stockout_items: {
+        Row: {
+          category_id: string | null
+          created_at: string
+          id: string
+          kpi_report_id: string
+          remarks: string | null
+          sku: string | null
+        }
+        Insert: {
+          category_id?: string | null
+          created_at?: string
+          id?: string
+          kpi_report_id: string
+          remarks?: string | null
+          sku?: string | null
+        }
+        Update: {
+          category_id?: string | null
+          created_at?: string
+          id?: string
+          kpi_report_id?: string
+          remarks?: string | null
+          sku?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "daily_kpi_stockout_items_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "product_categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "daily_kpi_stockout_items_kpi_report_id_fkey"
+            columns: ["kpi_report_id"]
+            isOneToOne: false
+            referencedRelation: "daily_kpi_reports"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       health_check: {
         Row: {
           id: number
@@ -51,6 +256,45 @@ export type Database = {
         Update: {
           id?: number
           note?: string | null
+        }
+        Relationships: []
+      }
+      kpi_config: {
+        Row: {
+          daily_cutoff_time: string
+          id: number
+          updated_at: string
+        }
+        Insert: {
+          daily_cutoff_time?: string
+          id: number
+          updated_at?: string
+        }
+        Update: {
+          daily_cutoff_time?: string
+          id?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      product_categories: {
+        Row: {
+          active: boolean
+          created_at: string
+          id: string
+          name: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          id?: string
+          name: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          id?: string
+          name?: string
         }
         Relationships: []
       }
@@ -309,6 +553,12 @@ export type Database = {
         | "training_admin"
         | "consultant"
       assignment_type: "nso" | "udc" | "dealer"
+      attachment_entity:
+        | "daily_kpi_report"
+        | "checklist_submission"
+        | "nso_visit"
+        | "promotion_compliance"
+      kpi_status: "submitted" | "approved" | "rejected" | "edited"
       region_type: "state" | "area" | "cluster"
     }
     CompositeTypes: {
@@ -460,6 +710,13 @@ export const Constants = {
         "consultant",
       ],
       assignment_type: ["nso", "udc", "dealer"],
+      attachment_entity: [
+        "daily_kpi_report",
+        "checklist_submission",
+        "nso_visit",
+        "promotion_compliance",
+      ],
+      kpi_status: ["submitted", "approved", "rejected", "edited"],
       region_type: ["state", "area", "cluster"],
     },
   },
