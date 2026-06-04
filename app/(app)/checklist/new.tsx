@@ -64,6 +64,17 @@ export default function NewChecklistScreen() {
       </View>
     );
   }
+  if (template.items.length === 0) {
+    return (
+      <View className="gap-2 p-6">
+        <Stack.Screen options={{ title: template.name }} />
+        <Text className="text-base font-semibold text-neutral-900 dark:text-white">No items in this template yet</Text>
+        <Text className="text-neutral-500">
+          A Super Admin needs to add at least one item in Admin → Checklist templates → {template.name}, then return here.
+        </Text>
+      </View>
+    );
+  }
 
   const photoMissing = template.items.some((it) => it.requires_photo
     && answers[it.id]?.answer === 'done'

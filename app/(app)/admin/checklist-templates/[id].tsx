@@ -64,6 +64,7 @@ export default function TemplateForm() {
         </View>
       )} />
       {saveTpl.error && <Text className="text-red-600">{(saveTpl.error as Error).message}</Text>}
+      {saveTpl.isSuccess && !saveTpl.isPending && <Text className="text-green-700 dark:text-green-400">Template saved ✓</Text>}
       <Pressable disabled={saveTpl.isPending} onPress={handleSubmit(onSubmitTpl)}
         className="items-center rounded-xl bg-blue-600 px-6 py-4 active:bg-blue-700">
         {saveTpl.isPending ? <ActivityIndicator color="#fff" /> : <Text className="font-semibold text-white">Save template</Text>}
@@ -71,7 +72,15 @@ export default function TemplateForm() {
 
       {!isNew && (
         <View className="gap-3">
-          <Text className="text-sm font-semibold uppercase tracking-wide text-neutral-500">Items</Text>
+          <Text className="text-sm font-semibold uppercase tracking-wide text-neutral-500">Items ({(existing?.items ?? []).length})</Text>
+          {(existing?.items ?? []).length === 0 && (
+            <Text className="text-amber-700 dark:text-amber-400">
+              No items yet — fill the &quot;+ New item&quot; panel below and tap &quot;Add item&quot; for each one. Repeat to add more.
+            </Text>
+          )}
+          {saveItem.isSuccess && !saveItem.isPending && <Text className="text-green-700 dark:text-green-400">Item saved ✓</Text>}
+          {saveItem.error && <Text className="text-red-600">{(saveItem.error as Error).message}</Text>}
+          {deleteItem.isSuccess && !deleteItem.isPending && <Text className="text-green-700 dark:text-green-400">Item deleted ✓</Text>}
           {(existing?.items ?? []).map((it: any) => (
             <ItemRow key={it.id} item={it} templateId={id!}
               onSave={(values) => saveItem.mutate({ id: it.id, templateId: id!, values })}
