@@ -13,6 +13,7 @@ export default function PendingKpi() {
         data={data ?? []}
         keyExtractor={(r) => r.id}
         contentContainerClassName="p-4 gap-2"
+        ListEmptyComponent={!isPending ? <Text className="p-4 text-neutral-500">No KPI reports pending review.</Text> : null}
         renderItem={({ item }) => (
           <Link href={`/kpi/${item.id}` as any} className="rounded-xl border border-neutral-200 p-3 dark:border-neutral-800">
             <View>

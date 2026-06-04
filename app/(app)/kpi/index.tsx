@@ -25,6 +25,23 @@ export default function KpiIndex() {
   const today = useTodayKpi(storeId);
   const recent = useRecentKpi(storeId);
 
+  if (!storeId) {
+    return (
+      <View className="flex-1 gap-3 bg-white p-6 dark:bg-neutral-950">
+        <Stack.Screen options={{ title: 'Daily KPI' }} />
+        <Text className="text-base text-neutral-700 dark:text-neutral-300">
+          This account isn&apos;t assigned to a primary store.
+        </Text>
+        <Text className="text-neutral-500">
+          KPI submission is for store users (UDC). Reviewers and admins use the Pending KPI queue and dashboards instead.
+        </Text>
+        {['nso', 'state_area_manager', 'super_admin'].includes(profile?.role ?? '') && (
+          <Link href={'/kpi/pending' as any} className="text-blue-600 dark:text-blue-400">Open pending reviews</Link>
+        )}
+      </View>
+    );
+  }
+
   return (
     <View className="flex-1 bg-white dark:bg-neutral-950">
       <Stack.Screen options={{ title: 'Daily KPI' }} />
@@ -37,7 +54,7 @@ export default function KpiIndex() {
             </Text>
           </Link>
         ) : (
-          <Link href={"/kpi/new" as any} className="text-blue-600 dark:text-blue-400">+ Submit today's KPI</Link>
+          <Link href={'/kpi/new' as any} className="text-blue-600 dark:text-blue-400">+ Submit today&apos;s KPI</Link>
         )}
       </View>
 
@@ -46,6 +63,7 @@ export default function KpiIndex() {
         keyExtractor={(r) => r.id}
         contentContainerClassName="p-4 gap-2"
         ListHeaderComponent={<Text className="text-sm font-semibold uppercase tracking-wide text-neutral-500">Recent</Text>}
+        ListEmptyComponent={!recent.isPending ? <Text className="p-4 text-neutral-500">No reports yet.</Text> : null}
         renderItem={({ item }) => (
           <Link href={`/kpi/${item.id}` as any} className="rounded-xl border border-neutral-200 p-3 dark:border-neutral-800">
             <View>
