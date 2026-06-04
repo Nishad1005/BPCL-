@@ -38,7 +38,11 @@ async function visibleStoreCount(role: string): Promise<number> {
 
 async function visibleKpiCount(role: string): Promise<number> {
   const c = clientFor(role); await signIn(c, role);
-  const { data, error } = await c.from('daily_kpi_reports').select('id');
+  // Count only the fixture-store + today rows so the assertion is stable across days
+  // (yesterday's fixtures stay in the table; we don't want them to inflate the count).
+  const today = new Date().toISOString().slice(0, 10);
+  const { data, error } = await c.from('daily_kpi_reports').select('id')
+    .eq('store_id', STORE_INDORE_1).eq('report_date', today);
   if (error) throw new Error(`select kpi as ${role}: ${error.message}`);
   await c.auth.signOut();
   return data!.length;
