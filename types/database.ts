@@ -74,6 +74,121 @@ export type Database = {
           },
         ]
       }
+      checklist_answers: {
+        Row: {
+          answer: Database["public"]["Enums"]["checklist_answer"]
+          has_photo: boolean
+          id: string
+          item_id: string
+          remarks: string | null
+          submission_id: string
+        }
+        Insert: {
+          answer: Database["public"]["Enums"]["checklist_answer"]
+          has_photo?: boolean
+          id?: string
+          item_id: string
+          remarks?: string | null
+          submission_id: string
+        }
+        Update: {
+          answer?: Database["public"]["Enums"]["checklist_answer"]
+          has_photo?: boolean
+          id?: string
+          item_id?: string
+          remarks?: string | null
+          submission_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "checklist_answers_item_id_fkey"
+            columns: ["item_id"]
+            isOneToOne: false
+            referencedRelation: "checklist_items"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "checklist_answers_submission_id_fkey"
+            columns: ["submission_id"]
+            isOneToOne: false
+            referencedRelation: "store_checklist_submissions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      checklist_items: {
+        Row: {
+          id: string
+          prompt: string
+          requires_photo: boolean
+          section: string | null
+          sort: number
+          template_id: string
+        }
+        Insert: {
+          id?: string
+          prompt: string
+          requires_photo?: boolean
+          section?: string | null
+          sort?: number
+          template_id: string
+        }
+        Update: {
+          id?: string
+          prompt?: string
+          requires_photo?: boolean
+          section?: string | null
+          sort?: number
+          template_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "checklist_items_template_id_fkey"
+            columns: ["template_id"]
+            isOneToOne: false
+            referencedRelation: "checklist_templates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      checklist_templates: {
+        Row: {
+          active: boolean
+          created_at: string
+          created_by: string | null
+          frequency: Database["public"]["Enums"]["checklist_frequency"]
+          id: string
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          created_by?: string | null
+          frequency: Database["public"]["Enums"]["checklist_frequency"]
+          id?: string
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          created_by?: string | null
+          frequency?: Database["public"]["Enums"]["checklist_frequency"]
+          id?: string
+          name?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "checklist_templates_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       daily_kpi_reports: {
         Row: {
           abv: number | null
@@ -363,6 +478,58 @@ export type Database = {
         }
         Relationships: []
       }
+      store_checklist_submissions: {
+        Row: {
+          id: string
+          period_start: string
+          score: number
+          store_id: string
+          submitted_at: string
+          submitted_by: string
+          template_id: string
+        }
+        Insert: {
+          id?: string
+          period_start: string
+          score?: number
+          store_id: string
+          submitted_at?: string
+          submitted_by: string
+          template_id: string
+        }
+        Update: {
+          id?: string
+          period_start?: string
+          score?: number
+          store_id?: string
+          submitted_at?: string
+          submitted_by?: string
+          template_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "store_checklist_submissions_store_id_fkey"
+            columns: ["store_id"]
+            isOneToOne: false
+            referencedRelation: "stores"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "store_checklist_submissions_submitted_by_fkey"
+            columns: ["submitted_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "store_checklist_submissions_template_id_fkey"
+            columns: ["template_id"]
+            isOneToOne: false
+            referencedRelation: "checklist_templates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       stores: {
         Row: {
           active: boolean
@@ -558,6 +725,8 @@ export type Database = {
         | "checklist_submission"
         | "nso_visit"
         | "promotion_compliance"
+      checklist_answer: "done" | "not_done" | "needs_support" | "na"
+      checklist_frequency: "daily" | "weekly" | "monthly" | "visit_based"
       kpi_status: "submitted" | "approved" | "rejected" | "edited"
       region_type: "state" | "area" | "cluster"
     }
@@ -716,6 +885,8 @@ export const Constants = {
         "nso_visit",
         "promotion_compliance",
       ],
+      checklist_answer: ["done", "not_done", "needs_support", "na"],
+      checklist_frequency: ["daily", "weekly", "monthly", "visit_based"],
       kpi_status: ["submitted", "approved", "rejected", "edited"],
       region_type: ["state", "area", "cluster"],
     },
